@@ -4,9 +4,7 @@ import streamlit as st
 from datetime import date
 
 
-# =========================================================
-# 1. PAGE CONFIGURATION
-# =========================================================
+# page configuration
 st.set_page_config(
     page_title="Hotel Cancellation Predictor",
     page_icon="🏨",
@@ -14,9 +12,7 @@ st.set_page_config(
 )
 
 
-# =========================================================
-# 2. LOAD MODEL AND SUPPORTING FILES
-# =========================================================
+# load model and supporting files
 @st.cache_resource
 def load_model_files():
     model = joblib.load(
@@ -53,7 +49,7 @@ def load_dropdown_options():
         usecols=categorical_columns
     )
 
-    # Apply the same missing-value treatment used in the notebook
+    # apply the same missing-value treatment used in the notebook
     dataset["country"] = dataset["country"].fillna(
         dataset["country"].mode()[0]
     )
@@ -100,9 +96,7 @@ except Exception as error:
     st.stop()
 
 
-# =========================================================
-# 3. DROPDOWN OPTIONS
-# =========================================================
+# drop down options
 hotel_options = dropdown_options["hotel"]
 meal_options = dropdown_options["meal"]
 country_options = dropdown_options["country"]
@@ -132,9 +126,7 @@ customer_type_options = dropdown_options[
 ]
 
 
-# =========================================================
-# 4. COUNTRY DISPLAY NAMES
-# =========================================================
+# country display names
 country_names = {
     "PRT": "Portugal",
     "GBR": "United Kingdom",
@@ -173,9 +165,7 @@ def display_country(country_code):
     return f"{country_name} ({country_code})"
 
 
-# =========================================================
-# 5. WEBPAGE STYLING
-# =========================================================
+# webpage styling
 st.markdown(
     """
     <style>
@@ -359,9 +349,7 @@ st.markdown(
 )
 
 
-# =========================================================
-# 6. HEADER
-# =========================================================
+# header
 st.markdown(
     (
         '<div class="hero">'
@@ -378,9 +366,7 @@ st.markdown(
 )
 
 
-# =========================================================
-# 7. INPUT FORM
-# =========================================================
+# input form
 st.header("Prediction")
 
 
@@ -389,9 +375,7 @@ with st.form(
     clear_on_submit=False
 ):
 
-    # -----------------------------------------------------
-    # Main booking details
-    # -----------------------------------------------------
+    # main booking details
     st.subheader("Main Booking Details")
 
     st.markdown(
@@ -514,9 +498,7 @@ with st.form(
     st.divider()
 
 
-    # -----------------------------------------------------
-    # Booking history
-    # -----------------------------------------------------
+    # booking history
     st.subheader("Booking History")
 
     st.markdown(
@@ -583,9 +565,7 @@ with st.form(
     st.divider()
 
 
-    # -----------------------------------------------------
-    # Additional booking details
-    # -----------------------------------------------------
+    # additional booking details
     st.subheader("Additional Booking Details")
 
     st.markdown(
@@ -661,9 +641,7 @@ with st.form(
         )
 
 
-    # -----------------------------------------------------
-    # Centred prediction button
-    # -----------------------------------------------------
+    # prediction buttonn
     button_col1, button_col2, button_col3 = st.columns(
         [1, 1.4, 1]
     )
@@ -676,9 +654,7 @@ with st.form(
         )
 
 
-# =========================================================
-# 8. INPUT VALIDATION
-# =========================================================
+# input validation
 if submitted:
 
     total_guests = (
@@ -740,9 +716,7 @@ if submitted:
     else:
 
         try:
-            # =================================================
-            # 9. CREATE UNSEEN BOOKING DATA
-            # =================================================
+            # unseen booking data
             arrival_year_selected = (
                 arrival_date_selected.year
             )
@@ -851,9 +825,7 @@ if submitted:
             })
 
 
-            # =================================================
-            # 10. APPLY SAME PREPROCESSING AS NOTEBOOK
-            # =================================================
+            # preprocessing
             df_input_encoded = pd.get_dummies(
                 df_input
             )
@@ -868,7 +840,7 @@ if submitted:
             ]
 
 
-            # Confirm expected feature order
+            # confirm expected feature order
             if list(df_input_selected.columns) != list(
                 selected_features
             ):
@@ -878,9 +850,7 @@ if submitted:
                 )
 
 
-            # =================================================
-            # 11. GENERATE PREDICTION
-            # =================================================
+            # generate prediction
             prediction = model.predict(
                 df_input_selected
             )[0]
@@ -911,7 +881,7 @@ if submitted:
             )
 
 
-            # Confirm probabilities are valid
+            # confirm probabilities are valid
             probability_total = (
                 cancellation_probability
                 + not_cancelled_probability
@@ -923,9 +893,7 @@ if submitted:
                 )
 
 
-            # =================================================
-            # 12. DETERMINE RISK LEVEL
-            # =================================================
+            # determine risk level
             if cancellation_probability >= 0.70:
                 risk_level = "High"
 
@@ -936,9 +904,7 @@ if submitted:
                 risk_level = "Low"
 
 
-            # =================================================
-            # 13. DISPLAY PREDICTION RESULT
-            # =================================================
+            # display prediction result
             st.divider()
             st.header("Prediction Result")
 
@@ -988,9 +954,7 @@ if submitted:
                 )
 
 
-            # =================================================
-            # 14. CANCELLATION RISK INDICATOR
-            # =================================================
+            # cancellation risk indicator
             st.subheader(
                 "Cancellation Risk Indicator"
             )
@@ -1012,9 +976,7 @@ if submitted:
             )
 
 
-            # =================================================
-            # 15. RECOMMENDED HOTEL ACTIONS
-            # =================================================
+            # recommended hotel actions
             st.header(
                 "Recommended Hotel Actions"
             )
